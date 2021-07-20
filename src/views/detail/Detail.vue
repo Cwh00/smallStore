@@ -32,7 +32,9 @@
                 <van-action-bar-button type="danger" text="立即购买" @click="toCart"/>
             </van-action-bar>
             <van-tabs v-model="active">
-                <van-tab title="概述">{{goods.details}}</van-tab>
+                <van-tab title="概述" >
+                    <div v-html="goods.details"></div>
+                </van-tab>
                 <van-tab title="热评">
                     <div v-for="item in goods.comments" :key="item"></div>
                 </van-tab>
@@ -107,9 +109,10 @@
             }
             onMounted(()=>{
                 getGoodsDetail(route.query.id).then(res=>{
-                    console.log(res.goods.is_collect)
+                    console.log(res)
+                    //收藏
                     isCollection.value = res.goods.is_collect == 1 ? true : false
-                    console.log(isCollection)
+                    
                     goodDetails.goods = res.goods
                     goodDetails.like_goods = res.like_goods
                 })
@@ -135,7 +138,7 @@
     .detail {
 
         .content {
-            margin-top: 45px;
+            margin-top: var(--content-margin-top);
                 .van-action-bar {
                     z-index: 10;
                 }
