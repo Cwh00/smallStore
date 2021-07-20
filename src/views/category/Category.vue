@@ -43,6 +43,7 @@
 <script>
     import backTop from 'components/common/backTop';
     import { useRouter } from 'vue-router';
+    import { Toast } from 'vant';
     import BScroll from 'better-scroll';
     import topNav from 'components/content/topNav';
     import { getGoods,getCurrentGoods } from 'network/category';
@@ -73,11 +74,11 @@
             let bscroll = reactive({});
             //实例挂载完成之后,获取所有分类列表、初始化排序商品、
             onMounted(()=>{
-                console.log('实例挂完成')
+                Toast.loading({message: '正在加载'});
                 getGoods().then(res=>{
-                    // console.log(res.categories);
                     categories.value = res.categories
                 });
+                Toast.clear();
                 init();
                 bscroll = new BScroll(document.querySelector('.goods'),{
                     probeType: 3, //0、1、2、3,3滑动以及滑动过后的滚动都会触发scroll事件

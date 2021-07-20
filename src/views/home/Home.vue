@@ -19,6 +19,7 @@
 </template>
 <script>
     import BScroll from 'better-scroll';
+    import { Toast } from 'vant';
     import { onMounted,reactive,ref,computed,watchEffect,nextTick } from 'vue';
     import { getHomeAllData, getHomeGoods } from 'network/home.js';
     import topNav from 'components/content/topNav';
@@ -74,6 +75,7 @@
             let bscroll = reactive({});
 
             onMounted(()=>{
+                Toast.loading({message: '正在加载'})
                 getHomeAllData().then(res=>{
                     //获取首页的商品推荐数据
                     bannerList.value = res.slides
@@ -91,6 +93,7 @@
                 getHomeGoods('new').then(res=>{
                     goods.new.list = res.goods.data
                 })
+                Toast.clear();
                 //创建betterScroll对象
                 bscroll = new BScroll(document.querySelector('.wrapper'),{
                     probeType: 3, //0、1、2、3,3滑动以及滑动过后的滚动都会触发scroll事件

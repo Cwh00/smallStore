@@ -25,7 +25,6 @@
             </van-card>
             <van-action-bar>
                 <van-action-bar-icon icon="chat-o" text="客服" color="#ee0a24" />
-                <van-action-bar-icon icon="cart-o" text="购物车" @click="$router.push({path: '/shopcart'})"/>
                 <van-action-bar-icon v-if="isCollection" icon="star" text="已收藏" color="#ff5000" @click="collection"/>
                 <van-action-bar-icon v-else icon="star-o" text="已收藏" color="#ff5000" @click="collection"/>
                 <van-action-bar-button type="warning" text="加入购物车" @click="addToCart"/>
@@ -160,7 +159,11 @@
                             justify-content: space-between;
                         }
                 }
-            
+                .van-tabs__content {
+                        img {
+                            max-width: 100%;
+                        }
+                }
             
         }
     }
