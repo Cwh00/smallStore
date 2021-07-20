@@ -8,7 +8,8 @@ import { Swipe, SwipeItem, Lazyload, Badge, Tab, Tabs,
          Card, Image as VanImage,ImagePreview, tag, button,
          ActionBar, ActionBarIcon, ActionBarButton, Form, Field,
          CellGroup, Stepper, Checkbox, CheckboxGroup, SwipeCell,
-         SubmitBar,Toast
+         SubmitBar, Toast, AddressEdit, AddressList, Popup, Grid,
+         GridItem, List, PullRefresh, Icon
         } from 'vant'
 
 createApp(App)
@@ -25,5 +26,7 @@ createApp(App)
     .use(ActionBar).use(ActionBarIcon).use(ActionBarButton)
     .use(Form).use(Field).use(CellGroup).use(Stepper)
     .use(Checkbox).use(CheckboxGroup).use(SwipeCell)
-    .use(SubmitBar).use(Toast)
+    .use(SubmitBar).use(Toast).use(AddressEdit).use(AddressList)
+    .use(Popup).use(Grid).use(GridItem).use(List).use(PullRefresh)
+    .use(Icon)
     .use(store).use(router).mount('#app')

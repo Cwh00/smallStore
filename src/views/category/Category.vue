@@ -50,9 +50,11 @@
     export default {
         name: 'Category',
         setup() {
+            //初始化 排序选项卡索引、排序选项卡默认当前类型、分类商品列表、当前属分类id、商品数据模型、分类点击索引、分类子选项点击索引
             let tabActive = ref(0);
             let tabCurrentType = ref('sales');
             let categories = ref([]);
+            //商品所属分类id，默认0为所有商品
             let current_id = ref(0);
             const goodsList = reactive({
                 sales:{page:1,list:[]},
@@ -61,6 +63,7 @@
             })
             let activeName = ref('0');
             let sidebarActive = ref(0)
+            //初始化得到排序商品、参数当前选项卡类型、商品所属分类id，初始值：sales排序的所有商品
             const init =  ()=>{
                 return getCurrentGoods(tabCurrentType.value,current_id.value).then(res=>{
                     goodsList[tabCurrentType.value].list = res.goods.data 
@@ -68,9 +71,11 @@
             }
             //初始化bscroll
             let bscroll = reactive({});
-
+            //实例挂载完成之后,获取所有分类列表、初始化排序商品、
             onMounted(()=>{
+                console.log('实例挂完成')
                 getGoods().then(res=>{
+                    // console.log(res.categories);
                     categories.value = res.categories
                 });
                 init();
@@ -79,15 +84,20 @@
                     click: true,     //允许内容点击
                     pullUpLoad: true, //默认是false，上拉加载
                 });
+                //滚动事件
                 bscroll.on('scroll',(position)=>{
                     //判断当前窗口定位，使backtop显示出来
                     isBackTopShow.value = (-position.y) > 400
                 });
+                //上拉加载事件
                 bscroll.on('pullingUp',()=>{
+                    //数据模型默认第一页，让加载从第二页开始，得到的数据结构赋值到数据模型list数组中，然后让分页加1
                     let page = goodsList[tabCurrentType.value].page + 1;
                     getCurrentGoods(tabCurrentType.value,current_id.value,page).then(res=>{
+                        console.log(res.goods.data)
                         goodsList[tabCurrentType.value].list.push(...res.goods.data)
                         goodsList[tabCurrentType.value].page += 1
+                        //每次获取完一页数据后，结束本次上拉加载
                         bscroll.finishPullUp();
                     }).catch(err=>{
                         console.log(err);
@@ -96,14 +106,18 @@
                     bscroll.refresh();
                 })
             }) 
+            //点击选项卡，通过索引修改选项卡当前类型
             const tabClick = (index)=>{
                 let tabTypes = ['sales','price','comments_count']
                 tabCurrentType.value = tabTypes[index]
+                //请求当前选项卡数据
                 init();
+                //页面渲染完之后重新计算高度
                 nextTick(()=>{
                     bscroll && bscroll.refresh()
                 });
             }
+            //点击分类，通过传入的分类id修改当前分类id
             const getCategory_id = (Category_id)=>{
                 current_id.value = Category_id
                 init();
@@ -164,8 +178,8 @@
     }
     .content {
         width: 100%;
-        margin-top: 100px;
-        margin-bottom: 50px;
+        margin-top: var(--subcontent-margin-top);
+        margin-bottom: var(--content-margin-bottom);
         .leftNav {
             width: 30%;
         }
@@ -181,5 +195,8 @@
         text-align: left;
         margin: 5px 0px;
     }
+    // .back-top {
+    //     position: fixed;
+    // }
 }
 </style>

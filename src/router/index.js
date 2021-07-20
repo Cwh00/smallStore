@@ -8,6 +8,13 @@ const Profile = ()=>import ('views/profile/Profile');
 const ShopCart = ()=>import ('views/shopcart/ShopCart');
 const Register = ()=>import ('views/profile/Register');
 const Login = ()=>import ('views/profile/Login');
+const Management = ()=>import ('views/profile/address/Management');
+const EditAddress = ()=>import ('views/profile/address/editAddress');
+const About = ()=>import ('views/profile/About');
+const OrderPreview = ()=>import ('views/profile/order/OrderPreview');
+const OrderDetail = ()=>import ('views/profile/order/OrderDetail');
+const Order = ()=>import ('views/profile/order/Order');
+const Collection = ()=>import ('views/profile/collection/Collection');
 const routes = [
   {
     path: '/',
@@ -37,6 +44,7 @@ const routes = [
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
     component: Detail,
+    
     meta: {
       title: '图书商城-商品详情',
       isNavShow: false,
@@ -86,6 +94,69 @@ const routes = [
       isNavShow: true
     }
   },
+  {
+    path: '/orderPreview',
+    name: 'OrderPreview',
+    component: OrderPreview,
+    meta: {
+      title: '图书商城-订单预览',
+      isNavShow: true
+    }
+  },
+  {
+    path: '/orderDetail',
+    name: 'OrderDetail',
+    component: OrderDetail,
+    meta: {
+      title: '图书商城-订单详情',
+      isNavShow: true
+    }
+  },
+  {
+    path: '/order',
+    name: 'Order',
+    component: Order,
+    meta: {
+      title: '图书商城-我的订单',
+      isNavShow: true
+    }
+  },
+  {
+    path: '/collection',
+    name: 'Collection',
+    component: Collection,
+    meta: {
+      title: '图书商城-我的收藏',
+      isNavShow: true
+    }
+  },
+  {
+    path: '/editAddress',
+    name: 'EditAddress',
+    component: EditAddress,
+    meta: {
+      title: '图书商城-编辑地址',
+      isNavShow: true
+    }
+  },
+  {
+    path: '/management',
+    name: 'Management',
+    component: Management,
+    meta: {
+      title: '图书商城-地址管理',
+      isNavShow: true
+    }
+  },
+  {
+    path: '/about',
+    name: 'About',
+    component: About,
+    meta: {
+      title: '图书商城-关于我们',
+      isNavShow: true
+    }
+  }
 ]
 
 const router = createRouter({

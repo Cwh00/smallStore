@@ -4,12 +4,13 @@
             <template v-slot:left></template>
             <template v-slot:default>图书商城</template>
         </top-nav>
-        <tab-control v-show="isTabFixed" @tabClick="tabClick" :tabTitles="['畅销','新书','精选']"></tab-control>
+        
+        <tab-control :currentIndex="tabCurrentIndex" v-show="isTabFixed" @tabClick="tabClick" :tabTitles="['畅销','新书','精选']"></tab-control>
         <div class="wrapper">
             <div class="content">
                 <home-banner :bannerList="bannerList"></home-banner>
                 <recommend :recommendList="recommendList"></recommend>
-                <tab-control @tabClick="tabClick" :tabTitles="['畅销','新书','精选']"></tab-control>
+                <tab-control :currentIndex="tabCurrentIndex" @tabClick="tabClick" :tabTitles="['畅销','新书','精选']"></tab-control>
                 <goodsList :goods="showGoods"></goodsList>
             </div>
         </div>
@@ -28,7 +29,7 @@
     import homeBanner from 'views/home/childComps/homeBanner.vue';
     export default {
         name: 'Home',
-        setup() {
+        setup(props,context) {
             /////横幅模块初始化/////
             let bannerList = ref([]);
 
@@ -40,6 +41,9 @@
 
             /////选项卡模块初始化/////
             let isTabFixed = ref(false);
+            //俩个选项卡同步绑定
+            const tabCurrentIndex = ref(0)
+
             //初始化返回顶部按钮
             let isBackTopShow = ref(false);
 
@@ -54,6 +58,7 @@
 
             //点击事件获取索引，通过索引改变选项卡类型
             const tabClick = (index)=>{
+                    tabCurrentIndex.value = index
                     let goodsType = ['sales','new','recommend'];
                     currentType.value = goodsType[index]
                     //切换选项卡渲染完成后重新计算高度
@@ -93,11 +98,13 @@
                     pullUpLoad: true, //默认是false，上拉加载
                 });
                 bscroll.on('scroll',(position)=>{
+                    console.log('触发滚动事件');
                     //判断当前窗口定位，使backtop显示出来
                     isBackTopShow.value = isTabFixed.value = (-position.y) > document.querySelector('.my-swipe').clientHeight + document.querySelector('.recommend').clientHeight
                 });
                 //上拉事件请求服务器数据，将内容添加到数据模型，重新计算高度摆放内容
                 bscroll.on('pullingUp',()=>{
+                    console.log('触发上拉事件')
                     const page = goods[currentType.value].page+1;
                     getHomeGoods(currentType.value,page).then(res=>{
                         goods[currentType.value].list.push(...res.goods.data)
@@ -130,7 +137,8 @@
                 bscroll,
                 isTabFixed,
                 isBackTopShow,
-                backTop
+                backTop,
+                tabCurrentIndex
             }
         },
         components: {
@@ -143,7 +151,7 @@
         }
     }
 </script>
-<style>
+<style lang="scss">
 .home {
     height: 100vh;
     position: relative;

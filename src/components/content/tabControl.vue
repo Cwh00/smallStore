@@ -19,17 +19,21 @@
                 default() {
                     return [];
                 }
+            },
+            currentIndex: {
+                type: Number,
+                default() {
+                    return 0;
+                }
             }
         },
         setup(props,{emit}) {
-            let currentIndex = ref(0);
             const itemClick = (index)=>{
-                currentIndex.value = index
+                // props.currentIndex = index
                 emit('tabClick',index)
             }   
             return {
                 itemClick,
-                currentIndex
             }
         }
     }

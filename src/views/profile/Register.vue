@@ -44,6 +44,11 @@
                     :rules="[{ required: true, message: '请填写邮箱' }]"
                     />
                 </van-cell-group>
+                <div class="gotoLogin">
+                    <a href="#" @click.prevent="$router.push({path: '/login'})">
+                        已有账号&nbsp;立即登录
+                    </a>
+                </div>
                 <div style="margin: 16px;">
                     <van-button round block type="primary" native-type="submit">
                     提交
@@ -104,6 +109,17 @@
         align-items: center;
         justify-content: center;
 
+        .gotoLogin {
+            padding: 0 30px;
+            text-align: right;
+            a {
+                text-align: left;
+                font-size: 10px;
+                text-decoration: underline;
+                color: rgb(11, 179, 179);
+            }
+            a:active,:hover {color: cyan;}
+        }
         .van-button {
             background-color: var(--color-tint);
         }

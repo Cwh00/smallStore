@@ -12,7 +12,6 @@ export function request(config) {
         //添加身份验证
         const token = window.localStorage.getItem('token');
         if(token){
-            console.log("##########请求拦截")
             config.headers.Authorization = 'Bearer '+token
         }
         return config;
@@ -21,7 +20,6 @@ export function request(config) {
     })
     //响应拦截
     instance.interceptors.response.use((res)=>{
-        console.log('###########响应拦截');
         return res.data ? res.data : res;
     },(err)=>{
         //请求返回错误信息

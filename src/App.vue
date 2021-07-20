@@ -1,7 +1,7 @@
 <template>
 <div>
   <router-view v-slot="{ Component }">
-    <keep-alive exclude="Detail,ShopCart">
+    <keep-alive include="Home,Category">
       <component :is="Component" />
     </keep-alive>
   </router-view> 
@@ -28,18 +28,18 @@
 </div>
 </template>
 <script>
-  import { onBeforeMount,onUnmounted } from 'vue';
+  import { onBeforeMount } from 'vue';
   import { useStore } from 'vuex';
   export default {
     name: 'App',
     setup() {
       const store = useStore();
       onBeforeMount(() => {
-        store.dispatch('updateCartCount')
+        if(window.localStorage.getItem('token')) {
+          store.dispatch('updateCartCount')
+        }
+        
       })
-      onUnmounted(()=>{
-        console.log('组件销毁')
-      }) 
     }
   }
 </script>

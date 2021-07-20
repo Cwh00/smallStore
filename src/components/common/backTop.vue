@@ -21,7 +21,7 @@
         width: 40px;
         height: 40px;
         border-radius: 50%;
-        position:absolute;
+        position: fixed;
         bottom: 65px;
         right: 25px;
     }

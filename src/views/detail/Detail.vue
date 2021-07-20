@@ -26,12 +26,13 @@
             <van-action-bar>
                 <van-action-bar-icon icon="chat-o" text="客服" color="#ee0a24" />
                 <van-action-bar-icon icon="cart-o" text="购物车" @click="$router.push({path: '/shopcart'})"/>
-                <van-action-bar-icon icon="star" text="已收藏" color="#ff5000" />
+                <van-action-bar-icon v-if="isCollection" icon="star" text="已收藏" color="#ff5000" @click="collection"/>
+                <van-action-bar-icon v-else icon="star-o" text="已收藏" color="#ff5000" @click="collection"/>
                 <van-action-bar-button type="warning" text="加入购物车" @click="addToCart"/>
-                <van-action-bar-button type="danger" text="立即购买" />
+                <van-action-bar-button type="danger" text="立即购买" @click="toCart"/>
             </van-action-bar>
             <van-tabs v-model="active">
-                <van-tab title="概述" v-html="goods.details"></van-tab>
+                <van-tab title="概述">{{goods.details}}</van-tab>
                 <van-tab title="热评">
                     <div v-for="item in goods.comments" :key="item"></div>
                 </van-tab>
@@ -46,10 +47,11 @@
     import { ImagePreview } from 'vant';
     import goodsList from 'components/content/goods/goodsList'
     import { ref,onMounted,toRefs,reactive } from 'vue';
-    import { useRoute } from 'vue-router';
+    import { useRoute, useRouter } from 'vue-router';
     import topNav from 'components/content/topNav';
     import { getGoodsDetail } from 'network/detail';
-    import { addCart } from 'network/shopingCart.js';
+    import { addCart } from 'network/shopingCart';
+    import { updateCollection } from 'network/collection'
     import { useStore } from 'vuex';
     import { Toast } from 'vant';
     export default {
@@ -59,18 +61,33 @@
             goodsList,
         },
         setup() {
+            let isCollection = ref(false);
             //选项卡索引
             let active = ref(2);
             //商品详情初始化
             let goodDetails = reactive({
                 goods:{},
-                like_goods:[]
+                like_goods:[],
             })
             const route = useRoute();
+            const router = useRouter();
             const store = useStore();
+            const collection = ()=>{
+                updateCollection(route.query.id).then(res=>{
+                    console.log(res)
+                    if(res.status == 201){
+                        Toast('收藏成功');
+                        isCollection.value = true
+                    }else if(res.status ==204){
+                        Toast('取消成功')
+                        isCollection.value = false
+                    }
+                })
+            }
             const imgZoom = (img_url)=>{
                 ImagePreview({images: [img_url],closeable: true})
             }
+            //加入购物车
             const addToCart = ()=>{
                 addCart({goods_id: goodDetails.goods.id,num: 1}).then(res=>{
                     if(res.status == 201 || res.status == 204) {
@@ -79,8 +96,20 @@
                     }
                 });
             }
+            //立即购买
+            const toCart = ()=>{
+                addCart({goods_id: goodDetails.goods.id,num: 1}).then(res=>{
+                    if(res.status == 201 || res.status == 204) {
+                        router.push({path: '/shopCart'})
+                        store.dispatch('updateCartCount')
+                    }
+                });
+            }
             onMounted(()=>{
                 getGoodsDetail(route.query.id).then(res=>{
+                    console.log(res.goods.is_collect)
+                    isCollection.value = res.goods.is_collect == 1 ? true : false
+                    console.log(isCollection)
                     goodDetails.goods = res.goods
                     goodDetails.like_goods = res.like_goods
                 })
@@ -94,7 +123,10 @@
                 ...toRefs(goodDetails),
                 active,
                 imgZoom,
-                addToCart
+                addToCart,
+                toCart,
+                isCollection,
+                collection
             }
         }
     }

@@ -27,9 +27,15 @@
                     </template>
                 </van-swipe-cell>
             </van-checkbox-group>
-            
+            <div class="goodsNull" v-if="List.length == 0">
+                <img src="~assets/images/shopingCart__null.png" alt=""/>
+                <p>购物车还有没商品哦，快去购物吧</p>
+                <van-button round block size="small" type="primary" native-type="submit" @click="$router.push({path: '/category'})">
+                前往购物
+                </van-button>
+            </div>
         </div>
-        <van-submit-bar :price="totalPrice * 100" button-text="提交订单" @submit="submitCarts">
+        <van-submit-bar :price="totalPrice * 100" button-text="生成订单" @submit="submitCarts">
             <van-checkbox v-model="checkedAll" @click="allChecked">全选</van-checkbox>
         </van-submit-bar>
     </div>
@@ -117,8 +123,10 @@
             const submitCarts = ()=>{
                 if(state.List.length == 0){
                     Toast.fail({message:'购物车没有商品'})
+                }else if(state.checkedResult.length == 0) {
+                    Toast.fail({message: '没有选中的商品'})
                 }else{
-                    router.push({path:'/profile'})
+                    router.push({path:'/orderPreview'})
                 }
             }
             //实例挂载之前，页面还未渲染
@@ -141,8 +149,8 @@
 <style lang="scss">
 .shopCart {
     .content {
-        margin-top: 50px;
-        margin-bottom: 100px;
+        margin-top: var(--content-margin-top);
+        margin-bottom: var(--content-margin-bottom);
         .good-item {
             display: flex;
             padding: 0 10px;
@@ -159,6 +167,23 @@
                         justify-content: space-between;
                     }
                 }
+            }
+        }
+        .goodsNull {
+            margin-top: var(--subcontent-margin-top);
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            img {
+                width: 100%;
+                margin-bottom: 20px;
+            }
+            .van-button {
+                margin-top: 20px;   
+                background-color: var(--color-tint);
+                width: 200px;
             }
         }
             .van-swipe-cell__right {

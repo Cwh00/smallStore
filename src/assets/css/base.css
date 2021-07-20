@@ -1,12 +1,16 @@
 @import "./normalize.css";
 :root {
     --color-text: #444;
-    --color-high-text: #42bBaa;
+    --color-high-text: #eeeeee;
     --color-tint: #42b983;
     --color-background: #fff;
     --font-size: 14px;
     --line-height: 1.5;
     --van-stepper-button-round-theme-color: var(--color-tint) !important;
+    --content-margin-top: 45px;
+    --content-margin-bottom: 50px;
+    --subcontent-margin-top: 100px;
+    
 }
 *, *::after, *::before {
     margin: 0;
