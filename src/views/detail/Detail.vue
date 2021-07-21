@@ -26,7 +26,7 @@
             <van-action-bar>
                 <van-action-bar-icon icon="chat-o" text="客服" color="#ee0a24" />
                 <van-action-bar-icon v-if="isCollection" icon="star" text="已收藏" color="#ff5000" @click="collection"/>
-                <van-action-bar-icon v-else icon="star-o" text="已收藏" color="#ff5000" @click="collection"/>
+                <van-action-bar-icon v-else icon="star-o" text="未收藏" color="#ff5000" @click="collection"/>
                 <van-action-bar-button type="warning" text="加入购物车" @click="addToCart"/>
                 <van-action-bar-button type="danger" text="立即购买" @click="toCart"/>
             </van-action-bar>
@@ -92,7 +92,7 @@
                     
                 })
             }
-            
+
             //防抖动函数，参数（业务逻辑函数，延时）
             function debounce(func,delay) {
                 let t = null;
