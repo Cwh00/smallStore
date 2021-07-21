@@ -26,13 +26,13 @@
                 <div class="goods-content">
                     <van-card  v-for="item in showGoods" :key="item.id"
                         :num="item.comments_count"
-                        :tag="item.conments_count >0 ? '流行' : '推荐'"
-                        :price="item.price"
+                        :tag="item.conments_count >= 1 ? '流行' : '推荐'"
+                        :price="item.price+'.00'"
                         :desc="item.updated_at"
                         :title="item.title"
                         :thumb="item.cover_url"
                         :lazy-load="true"
-                        @click="goDetail(item.id,item.title)"
+                        @click="goDetail(item.id)"
                         />
                 </div>    
             </div>                     
@@ -196,8 +196,8 @@
         text-align: left;
         margin: 5px 0px;
     }
-    // .back-top {
-    //     position: fixed;
-    // }
+    .goods-content .van-card .van-card__price {
+        color: red;
+    }
 }
 </style>

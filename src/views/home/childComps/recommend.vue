@@ -1,7 +1,7 @@
 <template>
     <div class="recommend">
         <div class="recommend-item" v-for="item in recommendList.slice(0,4)" :key="item.id">
-            <a href="#" @click.prevent="goDetail(item.id,item.description)" >
+            <a href="#" @click.prevent="goDetail(item.id)" >
                 <img v-lazy="item.cover_url" :alt="item.description">
                 <p>{{item.title}}</p>
             </a>
@@ -22,8 +22,8 @@
         },
         setup() {
             const router = useRouter();
-            const goDetail = (id,desc)=>{
-                router.push({path:'/detail',query:{id,desc}})
+            const goDetail = (id)=>{
+                router.push({path:'/detail',query:{id}})
             }
             return {
                 goDetail

@@ -1,7 +1,8 @@
 <template>
-    <div class="goodsList">
-        <goods-list-item v-for="item in goods" :product="item" :key="item"></goods-list-item>
+    <div v-if="goods.length > 0" class="goodsList">
+        <goods-list-item  v-for="item in goods" :product="item" :key="item"></goods-list-item>
     </div>
+    <div v-else >没有相关图书</div>
 </template>
 <script>
     import goodsListItem from './goodsListItem';

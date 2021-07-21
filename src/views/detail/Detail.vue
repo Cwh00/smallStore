@@ -14,7 +14,7 @@
             />
             <van-card
             :num="goods.stock"
-            :price="goods.price"
+            :price="goods.price+'.00'"
             :desc="goods.description"
             :title="goods.title"
             >
@@ -45,16 +45,15 @@
     </div>
 </template>
 <script>
-    import { ImagePreview } from 'vant';
+    import { ImagePreview,Toast } from 'vant';
     import goodsList from 'components/content/goods/goodsList'
-    import { ref,onMounted,toRefs,reactive } from 'vue';
+    import { ref,onMounted,toRefs,reactive, watch } from 'vue';
     import { useRoute, useRouter } from 'vue-router';
     import topNav from 'components/content/topNav';
     import { getGoodsDetail } from 'network/detail';
     import { addCart } from 'network/shopingCart';
     import { updateCollection } from 'network/collection'
     import { useStore } from 'vuex';
-    import { Toast } from 'vant';
     export default {
         name: 'Detail',
         components: {
@@ -67,15 +66,51 @@
             let active = ref(2);
             //商品详情初始化
             let goodDetails = reactive({
+                good_id: '',
                 goods:{},
                 like_goods:[],
             })
             const route = useRoute();
             const router = useRouter();
             const store = useStore();
-            const collection = ()=>{
-                updateCollection(route.query.id).then(res=>{
-                    console.log(res)
+            //数据初始化
+            const init = ()=>{
+                goodDetails.good_id = route.query.id
+                getGoodsDetail(goodDetails.good_id).then(res=>{
+                    console.log(res);
+                    //判断是否、更换图标
+                    isCollection.value = res.goods.is_collect == 1 ? true : false
+                    
+                    goodDetails.goods = res.goods
+                    //相关图书商品列表长度是基数时变成偶数
+                    if(res.like_goods.length % 2 == 0){
+                        goodDetails.like_goods = res.like_goods
+                    }else{
+                        goodDetails.like_goods = res.like_goods
+                        goodDetails.like_goods.pop()
+                    }
+                    
+                })
+            }
+            
+            //防抖动函数，参数（业务逻辑函数，延时）
+            function debounce(func,delay) {
+                let t = null;
+                return ()=>{
+                    if(t != null){
+                        clearTimeout(t)
+                    }
+                    t = setTimeout(()=>{
+                        func();
+                    },delay)
+                }
+            }
+
+            //////点击事件调用防抖动函数//////
+
+            //收藏点击更新
+            const collection = debounce(()=>{
+                updateCollection(goodDetails.good_id).then(res=>{
                     if(res.status == 201){
                         Toast('收藏成功');
                         isCollection.value = true
@@ -84,42 +119,42 @@
                         isCollection.value = false
                     }
                 })
-            }
+            },300)
             const imgZoom = (img_url)=>{
                 ImagePreview({images: [img_url],closeable: true})
             }
-            //加入购物车
-            const addToCart = ()=>{
+            //点击加入购物车
+            const addToCart = debounce(()=>{
                 addCart({goods_id: goodDetails.goods.id,num: 1}).then(res=>{
                     if(res.status == 201 || res.status == 204) {
                         Toast('添加成功');
                         store.dispatch('updateCartCount')
                     }
                 });
-            }
-            //立即购买
-            const toCart = ()=>{
+            },500)
+            
+            //点击立即购买
+            const toCart = debounce(()=>{
                 addCart({goods_id: goodDetails.goods.id,num: 1}).then(res=>{
                     if(res.status == 201 || res.status == 204) {
                         router.push({path: '/shopCart'})
                         store.dispatch('updateCartCount')
                     }
                 });
-            }
+            },500)
+            
             onMounted(()=>{
-                getGoodsDetail(route.query.id).then(res=>{
-                    console.log(res)
-                    //收藏
-                    isCollection.value = res.goods.is_collect == 1 ? true : false
-                    
-                    goodDetails.goods = res.goods
-                    goodDetails.like_goods = res.like_goods
-                })
-                // ImagePreview([
-                // 'https://img01.yzcdn.cn/vant/apple-1.jpg',
-                // 'https://img01.yzcdn.cn/vant/apple-2.jpg',
-                // ]);
+                Toast.loading({message: '正在加载'})
+                init();
+                Toast.clear();
             })
+            //监听路由id更新页面
+            watch(()=>route.query.id,()=>{
+                //只有在详情页面id变化才重新初始化数据
+                if(route.path == '/detail'){
+                    init();
+                }
+            });
 
             return {
                 ...toRefs(goodDetails),
@@ -138,6 +173,7 @@
 
         .content {
             margin-top: var(--content-margin-top);
+            margin-bottom: var(--content-margin-bottom);
                 .van-action-bar {
                     z-index: 10;
                 }
@@ -146,6 +182,9 @@
                     align-items: flex-start;
                     div {
                         text-align: left !important;
+                        .van-card__price {
+                            color: red;
+                        }
                         .van-card__title {
                             font-size: 16px;
                             max-height: none;

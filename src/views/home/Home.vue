@@ -30,6 +30,7 @@
     import homeBanner from 'views/home/childComps/homeBanner.vue';
     export default {
         name: 'Home',
+        ////////////////////////////////////////该页面学习阶段编写，结构比较混乱/////////////////////////////////////
         setup(props,context) {
             /////横幅模块初始化/////
             let bannerList = ref([]);
@@ -101,13 +102,11 @@
                     pullUpLoad: true, //默认是false，上拉加载
                 });
                 bscroll.on('scroll',(position)=>{
-                    console.log('触发滚动事件');
                     //判断当前窗口定位，使backtop显示出来
                     isBackTopShow.value = isTabFixed.value = (-position.y) > document.querySelector('.my-swipe').clientHeight + document.querySelector('.recommend').clientHeight
                 });
                 //上拉事件请求服务器数据，将内容添加到数据模型，重新计算高度摆放内容
                 bscroll.on('pullingUp',()=>{
-                    console.log('触发上拉事件')
                     const page = goods[currentType.value].page+1;
                     getHomeGoods(currentType.value,page).then(res=>{
                         goods[currentType.value].list.push(...res.goods.data)

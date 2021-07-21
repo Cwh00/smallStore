@@ -1,11 +1,11 @@
 <template>
     <div class="goods-item">
-        <a href="#" @click.prevent="goDetail(product.id,product.description)">
+        <a href="#" @click.prevent="goDetail(product.id)">
             <img v-lazy="product.cover_url" :alt="product.description">
         </a>
         <div class="goods-info">
             <p>{{product.title}}</p>
-            <span class="price"><small>¥</small>{{product.price}}</span>
+            <span class="price"><small>¥</small>{{product.price+'.00'}}</span>
             <span><i class="iconfont icon-shoucang"></i>{{product.collects_count}}</span>
         </div>
     </div>
@@ -24,8 +24,8 @@
         },
         setup() {
             const router = useRouter();
-            const goDetail = (id,desc)=>{
-                router.push({path:'/detail',query:{id,desc}})
+            const goDetail = (id)=>{
+                router.push({path:'/detail',query:{id}})
             }
             return {
                 goDetail

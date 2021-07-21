@@ -150,7 +150,7 @@
 .shopCart {
     .content {
         margin-top: var(--content-margin-top);
-        margin-bottom: var(--content-margin-bottom);
+        margin-bottom: 100px;
         .good-item {
             display: flex;
             padding: 0 10px;
@@ -194,7 +194,8 @@
         
     }
     .van-submit-bar {
-        bottom: 50px
+        bottom: 50px;
+        z-index: 9;
     }
 }
 

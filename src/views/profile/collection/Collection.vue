@@ -6,7 +6,7 @@
         <div class="content">
             <van-swipe-cell v-for="item in list" :key="item.id">
                 <van-card
-                    :price="item.goods.price"
+                    :price="item.goods.price+'.00'"
                     :desc="item.goods.description"
                     :title="item.goods.title"
                     :thumb="item.goods.cover_url"
@@ -50,11 +50,15 @@
 
     .content {
         margin-top: var(--content-margin-top);
+        margin-bottom: var(--content-margin-bottom);
             .van-card{
 
                 .van-card__content {
                     flex-direction: row;
                     align-items: center;
+                    .van-card__price {
+                        color: red;
+                    }
                 }
             }
             .van-button {
