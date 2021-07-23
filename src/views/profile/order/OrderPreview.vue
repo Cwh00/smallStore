@@ -6,7 +6,7 @@
         <div class="content">
             <div class="address-card" @click="goTo">
                 <div class="address-info">
-                    <p v-show="address.address">{{address.address}}</p>
+                    <p v-show="address.isAddressNull">你还没有设置或添加默认地址</p>
                     <span>{{address.name}}</span><span>{{address.phone}}</span>
                     <p>{{address.province}} {{address.city}} {{address.county}}</p>
                 </div>
@@ -71,7 +71,7 @@
                     let address = res.address.filter(n=>n.is_default == 1);
                     if(res.address.length == 0) {
                         state.address = {
-                            address: '还没有默认地址，请设置或添加默认地址'
+                            isAddressNull: true
                         }
                     }else{
                         state.address = address[0]
@@ -93,46 +93,51 @@
                 return sum;
             })
             const onSubmit = ()=>{
-                const params = {
-                    address_id: state.address.id
-                }
-                submitOrder(params).then(res=>{
-                    
-                    Toast.success({message: '创建订单成功'});
-                    store.dispatch('updateCartCount');
-                    
-                    state.popupShow = true
-                    //获取订单号
-                    
-                    state.order_id = res.id
-                    
-                    getQRCode(state.order_id,{type: 'aliyun'}).then(res=>{
-                        state.aliyun = res.qr_code_url
-                        state.wechat = res.qr_code_url
-                    })
+                console.log(state.address.isAddressNull)
+                if(!state.address.isAddressNull) {
+                    const params = {
+                        address_id: state.address.id
+                    }
+                    submitOrder(params).then(res=>{
+                        
+                        Toast.success({message: '创建订单成功'});
+                        store.dispatch('updateCartCount');
+                        
+                        state.popupShow = true
+                        //获取订单号
+                        
+                        state.order_id = res.id
+                        
+                        getQRCode(state.order_id,{type: 'aliyun'}).then(res=>{
+                            state.aliyun = res.qr_code_url
+                            state.wechat = res.qr_code_url
+                        })
 
-                    //轮巡检查支付状态
-                    //控制轮巡次数
-                    let count = 0;
-                    state.timer = setInterval(()=>{
-                        if(count < 5) {
-                            getOrderPayStatus(state.order_id).then(res=>{
-                                if(res.status == '2'){
-                                    clearInterval(state.timer);
+                        //轮巡检查支付状态
+                        //控制轮巡次数
+                        let count = 0;
+                        state.timer = setInterval(()=>{
+                            if(count < 5) {
+                                getOrderPayStatus(state.order_id).then(res=>{
+                                    if(res.status == '2'){
+                                        clearInterval(state.timer);
+                                        router.push({path: '/orderDetail',query:{order_id:state.order_id}});
+                                    }
+                                });
+                            }else{
+                                clearInterval(state.timer);
+                                Toast.fail({message: '支付超时'});
+                                state.popupShow = false
+                                setTimeout(()=>{
                                     router.push({path: '/orderDetail',query:{order_id:state.order_id}});
-                                }
-                            });
-                        }else{
-                            clearInterval(state.timer);
-                            Toast.fail({message: '支付超时'});
-                            state.popupShow = false
-                            setTimeout(()=>{
-                                router.push({path: '/orderDetail',query:{order_id:state.order_id}});
-                            },1500)
-                        }
-                        count++
-                    },2000)
-                })
+                                },1500)
+                            }
+                            count++
+                        },2000)
+                    })
+                }else{
+                    Toast.fail({message: '请添加默人地址'});
+                }   
             }
             onMounted(()=>{
                 init();

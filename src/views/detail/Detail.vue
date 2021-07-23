@@ -46,7 +46,7 @@
 </template>
 <script>
     import { ImagePreview,Toast } from 'vant';
-    import goodsList from 'components/content/goods/goodsList'
+    import goodsList from 'components/content/goods/goodsList';
     import { ref,onMounted,toRefs,reactive, watch } from 'vue';
     import { useRoute, useRouter } from 'vue-router';
     import topNav from 'components/content/topNav';
@@ -77,7 +77,6 @@
             const init = ()=>{
                 goodDetails.good_id = route.query.id
                 getGoodsDetail(goodDetails.good_id).then(res=>{
-                    console.log(res);
                     //判断是否、更换图标
                     isCollection.value = res.goods.is_collect == 1 ? true : false
                     
@@ -110,7 +109,10 @@
 
             //收藏点击更新
             const collection = debounce(()=>{
-                updateCollection(goodDetails.good_id).then(res=>{
+                console.log(store.state.user.isLogin)
+                //判断是否登录
+                if(store.state.user.isLogin) {
+                    updateCollection(goodDetails.good_id).then(res=>{
                     if(res.status == 201){
                         Toast('收藏成功');
                         isCollection.value = true
@@ -118,29 +120,46 @@
                         Toast('取消成功')
                         isCollection.value = false
                     }
-                })
+                    });
+                }else {
+                    Toast({message: '请先登录'})
+                    router.push({path: '/login'})
+                }
+                
             },300)
             const imgZoom = (img_url)=>{
                 ImagePreview({images: [img_url],closeable: true})
             }
             //点击加入购物车
             const addToCart = debounce(()=>{
-                addCart({goods_id: goodDetails.goods.id,num: 1}).then(res=>{
-                    if(res.status == 201 || res.status == 204) {
-                        Toast('添加成功');
-                        store.dispatch('updateCartCount')
-                    }
-                });
+                if(store.state.user.isLogin){
+                    addCart({goods_id: goodDetails.goods.id,num: 1}).then(res=>{
+                        if(res.status == 201 || res.status == 204) {
+                            Toast('添加成功');
+                            store.dispatch('updateCartCount')
+                        }
+                    });
+                }else {
+                    Toast({message: '请先登录'})
+                    router.push({path: '/login'})
+                }
+                
             },500)
             
             //点击立即购买
             const toCart = debounce(()=>{
-                addCart({goods_id: goodDetails.goods.id,num: 1}).then(res=>{
-                    if(res.status == 201 || res.status == 204) {
-                        router.push({path: '/shopCart'})
-                        store.dispatch('updateCartCount')
-                    }
-                });
+                if(store.state.user.isLogin) {
+                    addCart({goods_id: goodDetails.goods.id,num: 1}).then(res=>{
+                        if(res.status == 201 || res.status == 204) {
+                            router.push({path: '/shopCart'})
+                            store.dispatch('updateCartCount')
+                        }
+                    });
+                }else {
+                    Toast({message: '请先登录'})
+                    router.push({path: '/login'})
+                }
+                
             },500)
             
             onMounted(()=>{
